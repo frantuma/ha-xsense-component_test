@@ -61,7 +61,7 @@ class XSenseMQTT:
         self.mqtt_helper = mqtt_helper
         self._mqttc = mqtt_helper.client
         self.config_entry = config_entry
-
+        _LOGGER.error("carbon MQTT 1")
         self._simple_subscriptions: defaultdict[str, set[Subscription]] = defaultdict(
             set
         )

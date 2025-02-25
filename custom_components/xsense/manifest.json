@@ -1,10 +1,10 @@
 {
   "domain": "xsense",
   "name": "X-Sense Home Security",
-  "codeowners": ["@theosnel"],
+  "codeowners": ["@frantuma"],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/Jarnsen/ha-xsense-component_test",
+  "documentation": "https://github.com/frantuma/ha-xsense-component_test",
   "homekit": {},
   "integration_type": "hub",
   "iot_class": "cloud_polling",
