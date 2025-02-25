@@ -48,23 +48,31 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         password = self.entry.data[CONF_PASSWORD]
 
         self.xsense = AsyncXSense()
+        LOGGER.debug("XSenseDataUpdateCoordinator:_connect 1")
         await self.xsense.init()
-
+        LOGGER.debug("XSenseDataUpdateCoordinator:_connect 2")
         try:
             await self.xsense.login(email, password)
+            LOGGER.debug("XSenseDataUpdateCoordinator:_connect 3")
         except AuthFailed as ex:
+            LOGGER.debug("XSenseDataUpdateCoordinator:_connect 4")
             raise ConfigEntryAuthFailed(f"Login failed: {ex!s}") from ex
 
     async def _async_update_data(self) -> dict[str, Any]:
+        LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 1")
         if self.xsense is None:
+            LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 2")
             await self._connect()
+        LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 3")
         devices = await self.get_devices()
-
+        LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 4")
         if self.xsense and self.xsense.houses:
+            LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 5")
             for h in self.xsense.houses.values():
                 mqtt = self.mqtt_server(h.mqtt_server)
                 if not mqtt:
                     mqtt = self.setup_mqtt(h)
+                    LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 6")
                     await mqtt.async_connect()
 
                 await self.assure_subscriptions(h)
@@ -78,21 +86,27 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Retrieve all devices as a dict."""
         devices = {}
         try:
+            LOGGER.debug("XSenseDataUpdateCoordinator:get_all_devices 1")
             await self.xsense.load_all()
+            LOGGER.debug("XSenseDataUpdateCoordinator:get_all_devices 2")
             for h in self.xsense.houses.values():
                 for s in h.stations.values():
                     await self.xsense.get_state(s)
                     devices.update(s.devices.items())
         except (SessionExpired, AuthFailed) as ex:
+            LOGGER.debug("XSenseDataUpdateCoordinator:get_all_devices 3")
             if not retry:
                 await self._connect()
+                LOGGER.debug("XSenseDataUpdateCoordinator:get_all_devices 4")
                 return await self.get_all_devices(retry=True)
             raise ConfigEntryAuthFailed(
                 "Could not update, session no longer valid"
             ) from ex
         except APIFailure as ex:
+            LOGGER.debug("XSenseDataUpdateCoordinator:get_all_devices 5")
             raise UpdateFailed(f"XSense API Issue: {ex}") from ex
         else:
+            LOGGER.debug("XSenseDataUpdateCoordinator:get_all_devices 6")
             return devices
 
     def _get_station_by_id(self, identifier: str):
@@ -164,9 +178,10 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     def async_event_received(self, topic: str, data_str: bytes) -> None:
         """Handle incoming data from MQTT."""
+        LOGGER.debug("XSenseDataUpdateCoordinator:async_event_received 0 %s", data_str)
         data = json.loads(data_str.decode("utf8"))
         station_data = data.get("state", {}).get("reported", {})
-
+        LOGGER.debug("XSenseDataUpdateCoordinator:async_event_received 1")
         if station := self._get_station_by_id(station_data.get("stationSN")):
             children = station_data.pop("devs", {})
 
@@ -219,14 +234,15 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def request_device_updates(self, mqtt, house):
         """Ask MQTT server for updates for all realtime devices, such as temperature sensor."""
+        LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 1")
         for s in house.stations.values():
             updatable_devices = [
                 dev.sn for dev in s.devices.values() if dev.type in ["STH51", "STH0A"]
             ]
-
+            LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 2")
             if not updatable_devices:
                 continue
-
+            LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 3")
             msg = {
                 "state": {
                     "desired": {
