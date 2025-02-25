@@ -1,6 +1,6 @@
 {
-  "domain": "xsense",
-  "name": "X-Sense Home Security",
+  "domain": "xsense-vischio",
+  "name": "X-Sense vischio Security",
   "codeowners": ["@frantuma"],
   "config_flow": true,
   "dependencies": [],
