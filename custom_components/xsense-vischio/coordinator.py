@@ -65,7 +65,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             await self._connect()
         LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 3")
         devices = await self.get_devices()
-        LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 4")
+        LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 4: \n%s", json.dumps(devices, indent=2))
         if self.xsense and self.xsense.houses:
             LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 5")
             for h in self.xsense.houses.values():
@@ -234,8 +234,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def request_device_updates(self, mqtt, house):
         """Ask MQTT server for updates for all realtime devices, such as temperature sensor."""
-        LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 1")
-        for s in house.stations.values():
+        LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 1: \n%s", json.dumps(house, indent=2))
             updatable_devices = [
                 dev.sn for dev in s.devices.values() if dev.type in ["STH51", "STH0A"]
             ]
