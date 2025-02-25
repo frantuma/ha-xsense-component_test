@@ -1,8 +1,5 @@
 """The X-Sense Home Security integration."""
 
-import logging
-
-
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
@@ -13,8 +10,6 @@ from .const import DOMAIN
 from .coordinator import XSenseDataUpdateCoordinator
 
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.BUTTON, Platform.SENSOR]
-
-_LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up X-Sense Home Security from a config entry."""
