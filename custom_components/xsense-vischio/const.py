@@ -2,7 +2,7 @@
 
 import logging
 
-DOMAIN = "xsense"
+DOMAIN = "xsense-vischio"
 MANUFACTURER = "X-Sense"
 COORDINATOR = "coordinator"
 
