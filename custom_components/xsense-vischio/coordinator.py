@@ -238,7 +238,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             updatable_devices = [
                 dev.sn for dev in s.devices.values() if dev.type in ["STH51", "STH0A"]
             ]
-            LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 1: \n%r", house))
+            LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 1: \n%r", house)
             LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 2")
             if not updatable_devices:
                 continue
