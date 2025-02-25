@@ -65,7 +65,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             await self._connect()
         LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 3")
         devices = await self.get_devices()
-        LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 4: \n%s", json.dumps(devices, indent=2))
+        LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 4: \n%s", list(devices.keys()))
         if self.xsense and self.xsense.houses:
             LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 5")
             for h in self.xsense.houses.values():
