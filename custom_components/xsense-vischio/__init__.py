@@ -16,12 +16,10 @@ PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.BUTTON, Platform.S
 
 _LOGGER = logging.getLogger(__name__)
 
- _LOGGER.error("carbon init 1")
-
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up X-Sense Home Security from a config entry."""
     coordinator = XSenseDataUpdateCoordinator(hass, entry)
-    _LOGGER.error("carbon init 2")
+    # _LOGGER.error("carbon init 2")
     await coordinator.async_config_entry_first_refresh()
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
@@ -34,13 +32,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Handle options update."""
-    _LOGGER.error("carbon init 3")
+    #_LOGGER.error("carbon init 3")
     await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    _LOGGER.error("carbon init 4")
+    # _LOGGER.error("carbon init 4")
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         hass.data[DOMAIN].pop(entry.entry_id)
 
