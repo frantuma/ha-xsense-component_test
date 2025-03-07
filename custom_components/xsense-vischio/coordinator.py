@@ -28,6 +28,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Initialize the XSense hub."""
         LOGGER.debug("XSenseDataUpdateCoordinator:__init__")
         self.entry = entry
+        self.last_checked = None
         self.xsense: AsyncXSense = None
         super().__init__(
             hass,
@@ -65,7 +66,9 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             await self._connect()
         LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 3")
         devices = await self.get_devices()
-        LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 4: \n%r", devices)
+        last_checked = datetime.now()
+        self.last_checked = datetime.now()
+        # LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 4: \n%r", devices)
         if self.xsense and self.xsense.houses:
             LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 5")
             for h in self.xsense.houses.values():
@@ -80,7 +83,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 if mqtt.connected:
                     await self.request_device_updates(mqtt, h)
 
-        return devices
+        return {"stations": devices["stations"], "devices": devices["devices"], "last_checked": last_checked}
 
     async def get_all_devices(self, retry=False):
         """Retrieve all devices as a dict."""
@@ -238,7 +241,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             updatable_devices = [
                 dev.sn for dev in s.devices.values() if dev.type in ["STH51", "STH0A"]
             ]
-            LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 1: \n%r", s)
+            # LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 1: \n%r", s)
             LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 2")
             if not updatable_devices:
                 continue
