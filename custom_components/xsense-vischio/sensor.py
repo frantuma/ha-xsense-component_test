@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 from xsense.device import Device
 from xsense.entity import Entity
+from typing import Any
 
 from homeassistant import config_entries
 from homeassistant.components.sensor import (
@@ -199,6 +200,7 @@ class XSenseSensorEntity(XSenseEntity, SensorEntity):
         self._station_id = station_id
         self.entity_description = entity_description
         self._attr_available = False  # This overrides the default
+        self._last_checked = None
 
         super().__init__(coordinator, entity, station_id)
 
@@ -209,5 +211,12 @@ class XSenseSensorEntity(XSenseEntity, SensorEntity):
             device = self.coordinator.data["devices"][self._dev_id]
         else:
             device = self.coordinator.data["stations"][self._dev_id]
-
+        self._last_checked = self.coordinator.last_checked  # Update last checked time
         return self.entity_description.value_fn(device)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the sensor."""
+        attributes = super().extra_state_attributes or {}
+        attributes["last_checked"] = self._last_checked  # Add last checked time to attributes
+        return attributes
