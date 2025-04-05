@@ -218,5 +218,5 @@ class XSenseSensorEntity(XSenseEntity, SensorEntity):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the sensor."""
         attributes = super().extra_state_attributes or {}
-        attributes["last_checked"] = self._last_checked  # Add last checked time to attributes
+        attributes["ultima_request_attr"] = self._last_checked  # Add last checked time to attributes
         return attributes

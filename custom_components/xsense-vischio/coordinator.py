@@ -83,7 +83,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 if mqtt.connected:
                     await self.request_device_updates(mqtt, h)
 
-        return {"stations": devices["stations"], "devices": devices["devices"], "last_checked": last_checked}
+        return {"stations": devices["stations"], "devices": devices["devices"], "ultima_request": last_checked}
 
     async def get_all_devices(self, retry=False):
         """Retrieve all devices as a dict."""
