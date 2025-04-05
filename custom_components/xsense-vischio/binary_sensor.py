@@ -139,6 +139,7 @@ class XSenseBinarySensorEntity(XSenseEntity, BinarySensorEntity):
         self._station_id = station_id
         self.entity_description = entity_description
         self._attr_available = True  # This overrides the default
+        self._last_checked = None
         LOGGER.debug("init 1 %s", entity.data)
         super().__init__(coordinator, entity, station_id)
 
@@ -157,6 +158,7 @@ class XSenseBinarySensorEntity(XSenseEntity, BinarySensorEntity):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the sensor."""
         attributes = super().extra_state_attributes or {}
+        self._last_checked = self.coordinator.last_checked  # Update last checked time
         attributes["ultima_request_attr"] = self._last_checked  # Add last checked time to attributes
         return attributes
 
