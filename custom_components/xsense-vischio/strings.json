@@ -25,6 +25,9 @@
       "vistest": {
         "name": "Connected VSASA"
       },
+      "connected": {
+        "name": "Connected REAL"
+      },
       "is_life_end": {
         "name": "Is life end"
       },
