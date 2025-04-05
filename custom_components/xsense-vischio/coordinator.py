@@ -190,6 +190,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
             self.xsense.parse_get_state(station, station_data)
             for k, v in children.items():
+                LOGGER.debug("XSenseDataUpdateCoordinator:async_event_received FOR %s", v)
                 if dev := station.get_device_by_sn(k):
                     dev.set_data(v)
 

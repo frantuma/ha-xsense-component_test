@@ -78,8 +78,7 @@ SENSORS: tuple[XSenseBinarySensorEntityDescription, ...] = (
 )
 
 MQTTSensor = XSenseBinarySensorEntityDescription(
-    key="connected",
-    translation_key="connected",
+    key="vistest",
     entity_category=EntityCategory.DIAGNOSTIC,
     icon="mdi:connection",
     exists_fn=lambda entity: isinstance(entity, Station),
@@ -151,7 +150,7 @@ class XSenseBinarySensorEntity(XSenseEntity, BinarySensorEntity):
         else:
             device = self.coordinator.data["stations"][self._dev_id]
 
-        LOGGER.debug("is_on 1 %s", device.devices)
+        LOGGER.debug("is_on 1 %s", device.data)
         return self.entity_description.value_fn(device)
 
     @property
