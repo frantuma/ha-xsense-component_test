@@ -22,8 +22,8 @@
       "alarm_status": {
         "name": "Alarm Status"
       },
-      "connected": {
-        "name": "Connected"
+      "vistest": {
+        "name": "Connected VSASA"
       },
       "is_life_end": {
         "name": "Is life end"
