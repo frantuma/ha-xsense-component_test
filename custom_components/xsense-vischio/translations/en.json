@@ -27,6 +27,9 @@
             },
             "mute_status": {
                 "name": "Mute Status"
+            },
+            "connected": {
+                "name": "Connected TRANS"
             }
         },
         "sensor": {

@@ -82,6 +82,7 @@ MQTTSensor = XSenseBinarySensorEntityDescription(
     translation_key="connected",
     entity_category=EntityCategory.DIAGNOSTIC,
     icon="mdi:connection",
+    name="Connected name",
     exists_fn=lambda entity: isinstance(entity, Station),
     value_fn=lambda entity: False,
 )
