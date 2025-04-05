@@ -19,7 +19,7 @@ from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN
+from .const import DOMAIN, LOGGER
 from .coordinator import XSenseDataUpdateCoordinator
 from .entity import XSenseEntity
 
@@ -93,10 +93,13 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the xsense binary sensor entry."""
+    LOGGER.debug("async_setup_entry")
     devices: list[Device] = []
     coordinator: XSenseDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     for station in coordinator.data["stations"].values():
+        LOGGER.debug("async_setup_entry")
+        LOGGER.debug("async_setup_entry 1 %s", station.data)
         devices.extend(
             XSenseBinarySensorEntity(coordinator, station, description)
             for description in SENSORS
