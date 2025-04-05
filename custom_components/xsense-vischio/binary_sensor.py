@@ -98,8 +98,9 @@ async def async_setup_entry(
     coordinator: XSenseDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     for station in coordinator.data["stations"].values():
-        LOGGER.debug("async_setup_entry")
-        LOGGER.debug("async_setup_entry 1 %s", station.data)
+        LOGGER.debug("async_setup_entry stations")
+        LOGGER.debug("async_setup_entry stations 0 %s", station)
+        LOGGER.debug("async_setup_entry stations 1 %s", station.data)
         devices.extend(
             XSenseBinarySensorEntity(coordinator, station, description)
             for description in SENSORS
@@ -108,6 +109,9 @@ async def async_setup_entry(
         devices.append(XSenseMQTTConnectedEntity(coordinator, station, MQTTSensor))
 
     for dev in coordinator.data["devices"].values():
+        LOGGER.debug("async_setup_entry devices")
+        LOGGER.debug("async_setup_entry devices 0 %s", dev)
+        LOGGER.debug("async_setup_entry devices 1 %s", dev.data)
         devices.extend(
             XSenseBinarySensorEntity(
                 coordinator, dev, description, station_id=dev.station.entity_id
