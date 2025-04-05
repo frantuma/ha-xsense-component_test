@@ -139,7 +139,7 @@ class XSenseBinarySensorEntity(XSenseEntity, BinarySensorEntity):
         self._station_id = station_id
         self.entity_description = entity_description
         self._attr_available = True  # This overrides the default
-        LOGGER.debug("init 1 %s", entity)
+        LOGGER.debug("init 1 %s", entity.data)
         super().__init__(coordinator, entity, station_id)
 
     @property
@@ -150,8 +150,15 @@ class XSenseBinarySensorEntity(XSenseEntity, BinarySensorEntity):
         else:
             device = self.coordinator.data["stations"][self._dev_id]
 
-        LOGGER.debug("is_on 1 %s", device)
+        LOGGER.debug("is_on 1 %s", device.devices)
         return self.entity_description.value_fn(device)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the sensor."""
+        attributes = super().extra_state_attributes or {}
+        attributes["ultima_request_attr"] = self._last_checked  # Add last checked time to attributes
+        return attributes
 
 
 class XSenseMQTTConnectedEntity(XSenseBinarySensorEntity):
