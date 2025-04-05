@@ -79,7 +79,7 @@ SENSORS: tuple[XSenseBinarySensorEntityDescription, ...] = (
 
 MQTTSensor = XSenseBinarySensorEntityDescription(
     key="connected",
-    translation_key="vistest",
+    translation_key="connected",
     entity_category=EntityCategory.DIAGNOSTIC,
     icon="mdi:connection",
     exists_fn=lambda entity: isinstance(entity, Station),
