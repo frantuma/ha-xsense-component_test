@@ -138,8 +138,8 @@ class XSenseBinarySensorEntity(XSenseEntity, BinarySensorEntity):
         """Set up the instance."""
         self._station_id = station_id
         self.entity_description = entity_description
-        self._attr_available = False  # This overrides the default
-
+        self._attr_available = True  # This overrides the default
+        LOGGER.debug("init 1 %s", entity)
         super().__init__(coordinator, entity, station_id)
 
     @property
@@ -150,6 +150,7 @@ class XSenseBinarySensorEntity(XSenseEntity, BinarySensorEntity):
         else:
             device = self.coordinator.data["stations"][self._dev_id]
 
+        LOGGER.debug("is_on 1 %s", device)
         return self.entity_description.value_fn(device)
 
 
@@ -162,4 +163,6 @@ class XSenseMQTTConnectedEntity(XSenseBinarySensorEntity):
 
         device = self.coordinator.data["stations"][self._dev_id]
         mqtt_server = self.coordinator.mqtt_server(device.house.mqtt_server)
+        LOGGER.debug("XSenseMQTTConnectedEntity is_on 1 %s", device)
+        LOGGER.debug("XSenseMQTTConnectedEntity is_on 2 %s", mqtt_server)
         return mqtt_server.connected
