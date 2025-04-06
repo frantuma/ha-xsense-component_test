@@ -94,14 +94,14 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the xsense binary sensor entry."""
-    LOGGER.debug("async_setup_entry")
+    LOGGER.debug("VISCHIO - async_setup_entry")
     devices: list[Device] = []
     coordinator: XSenseDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     for station in coordinator.data["stations"].values():
-        LOGGER.debug("async_setup_entry stations")
-        LOGGER.debug("async_setup_entry stations 0 %s", station)
-        LOGGER.debug("async_setup_entry stations 1 %s", station.data)
+        LOGGER.debug("VISCHIO - async_setup_entry stations")
+        LOGGER.debug("VISCHIO - async_setup_entry stations 0 %s", station)
+        LOGGER.debug("VISCHIO - async_setup_entry stations 1 %s", station.data)
         devices.extend(
             XSenseBinarySensorEntity(coordinator, station, description)
             for description in SENSORS
@@ -110,9 +110,9 @@ async def async_setup_entry(
         devices.append(XSenseMQTTConnectedEntity(coordinator, station, MQTTSensor))
 
     for dev in coordinator.data["devices"].values():
-        LOGGER.debug("async_setup_entry devices")
-        LOGGER.debug("async_setup_entry devices 0 %s", dev)
-        LOGGER.debug("async_setup_entry devices 1 %s", dev.data)
+        LOGGER.debug("VISCHIO - async_setup_entry devices")
+        LOGGER.debug("VISCHIO - async_setup_entry devices 0 %s", dev)
+        LOGGER.debug("VISCHIO - async_setup_entry devices 1 %s", dev.data)
         devices.extend(
             XSenseBinarySensorEntity(
                 coordinator, dev, description, station_id=dev.station.entity_id
@@ -141,7 +141,7 @@ class XSenseBinarySensorEntity(XSenseEntity, BinarySensorEntity):
         self.entity_description = entity_description
         self._attr_available = True  # This overrides the default
         self._last_checked = None
-        LOGGER.debug("init 1 %s", entity.data)
+        LOGGER.debug("VISCHIO - init 1 %s", entity.data)
         super().__init__(coordinator, entity, station_id)
 
     @property
@@ -152,7 +152,7 @@ class XSenseBinarySensorEntity(XSenseEntity, BinarySensorEntity):
         else:
             device = self.coordinator.data["stations"][self._dev_id]
 
-        LOGGER.debug("is_on 1 %s", device.data)
+        LOGGER.debug("VISCHIO - is_on 1 %s", device.data)
         return self.entity_description.value_fn(device)
 
     @property
@@ -173,8 +173,8 @@ class XSenseMQTTConnectedEntity(XSenseBinarySensorEntity):
 
         device = self.coordinator.data["stations"][self._dev_id]
         mqtt_server = self.coordinator.mqtt_server(device.house.mqtt_server)
-        LOGGER.debug("XSenseMQTTConnectedEntity is_on 1 %s", device)
-        LOGGER.debug("XSenseMQTTConnectedEntity is_on 2 %s", mqtt_server)
+        LOGGER.debug("VISCHIO - XSenseMQTTConnectedEntity is_on 1 %s", device)
+        LOGGER.debug("VISCHIO - XSenseMQTTConnectedEntity is_on 2 %s", mqtt_server)
         return mqtt_server.connected
     
     def generate_entity_id(

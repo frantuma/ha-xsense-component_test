@@ -154,7 +154,7 @@ class XSenseMQTT:
     def _async_start_misc_periodic(self) -> None:
         """Start the misc periodic."""
         assert self._misc_timer is None, "Misc periodic already started"
-        _LOGGER.debug("%s: Starting client misc loop", self.config_entry.title)
+        _LOGGER.debug("VISCHIO - %s: Starting client misc loop", self.config_entry.title)
         # pylint: disable=import-outside-toplevel
         # import paho.mqtt.client as mqtt
 
@@ -186,7 +186,7 @@ class XSenseMQTT:
     ) -> None:
         """Handle socket open."""
         fileno = sock.fileno()
-        _LOGGER.debug("%s: connection opened %s", self.config_entry.title, fileno)
+        _LOGGER.debug("VISCHIO - %s: connection opened %s", self.config_entry.title, fileno)
         if fileno > -1:
             self.loop.add_reader(sock, partial(self._async_reader_callback, client))
         if not self._misc_timer:
@@ -202,7 +202,7 @@ class XSenseMQTT:
     ) -> None:
         """Handle socket close."""
         fileno = sock.fileno()
-        _LOGGER.debug("%s: connection closed %s", self.config_entry.title, fileno)
+        _LOGGER.debug("VISCHIO - %s: connection closed %s", self.config_entry.title, fileno)
         # If socket close is called before the connect
         # result is set make sure the first connection result is set
         self._async_connection_result(False)
@@ -235,7 +235,7 @@ class XSenseMQTT:
     ) -> None:
         """Register the socket for writing."""
         fileno = sock.fileno()
-        _LOGGER.debug("%s: register write %s", self.config_entry.title, fileno)
+        _LOGGER.debug("VISCHIO - %s: register write %s", self.config_entry.title, fileno)
         if fileno > -1:
             self.loop.add_writer(sock, partial(self._async_writer_callback, client))
 
@@ -246,7 +246,7 @@ class XSenseMQTT:
     ) -> None:
         """Unregister the socket for writing."""
         fileno = sock.fileno()
-        _LOGGER.debug("%s: unregister write %s", self.config_entry.title, fileno)
+        _LOGGER.debug("VISCHIO - %s: unregister write %s", self.config_entry.title, fileno)
         if fileno > -1:
             self.loop.remove_writer(sock)
 

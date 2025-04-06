@@ -26,7 +26,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         """Initialize the XSense hub."""
-        LOGGER.debug("XSenseDataUpdateCoordinator:__init__")
+        LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:__init__")
         self.entry = entry
         self.last_checked = None
         self.xsense: AsyncXSense = None
@@ -49,33 +49,33 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         password = self.entry.data[CONF_PASSWORD]
 
         self.xsense = AsyncXSense()
-        LOGGER.debug("XSenseDataUpdateCoordinator:_connect 1")
+        LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:_connect 1")
         await self.xsense.init()
-        LOGGER.debug("XSenseDataUpdateCoordinator:_connect 2")
+        LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:_connect 2")
         try:
             await self.xsense.login(email, password)
-            LOGGER.debug("XSenseDataUpdateCoordinator:_connect 3")
+            LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:_connect 3")
         except AuthFailed as ex:
-            LOGGER.debug("XSenseDataUpdateCoordinator:_connect 4")
+            LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:_connect 4")
             raise ConfigEntryAuthFailed(f"Login failed: {ex!s}") from ex
 
     async def _async_update_data(self) -> dict[str, Any]:
-        LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 1")
+        LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:_async_update_data 1")
         if self.xsense is None:
-            LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 2")
+            LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:_async_update_data 2")
             await self._connect()
-        LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 3")
+        LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:_async_update_data 3")
         devices = await self.get_devices()
         last_checked = datetime.now()
         self.last_checked = datetime.now()
-        # LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 4: \n%r", devices)
+        # LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:_async_update_data 4: \n%r", devices)
         if self.xsense and self.xsense.houses:
-            LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 5")
+            LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:_async_update_data 5")
             for h in self.xsense.houses.values():
                 mqtt = self.mqtt_server(h.mqtt_server)
                 if not mqtt:
                     mqtt = self.setup_mqtt(h)
-                    LOGGER.debug("XSenseDataUpdateCoordinator:_async_update_data 6")
+                    LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:_async_update_data 6")
                     await mqtt.async_connect()
 
                 await self.assure_subscriptions(h)
@@ -89,27 +89,27 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Retrieve all devices as a dict."""
         devices = {}
         try:
-            LOGGER.debug("XSenseDataUpdateCoordinator:get_all_devices 1")
+            LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:get_all_devices 1")
             await self.xsense.load_all()
-            LOGGER.debug("XSenseDataUpdateCoordinator:get_all_devices 2")
+            LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:get_all_devices 2")
             for h in self.xsense.houses.values():
                 for s in h.stations.values():
                     await self.xsense.get_state(s)
                     devices.update(s.devices.items())
         except (SessionExpired, AuthFailed) as ex:
-            LOGGER.debug("XSenseDataUpdateCoordinator:get_all_devices 3")
+            LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:get_all_devices 3")
             if not retry:
                 await self._connect()
-                LOGGER.debug("XSenseDataUpdateCoordinator:get_all_devices 4")
+                LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:get_all_devices 4")
                 return await self.get_all_devices(retry=True)
             raise ConfigEntryAuthFailed(
                 "Could not update, session no longer valid"
             ) from ex
         except APIFailure as ex:
-            LOGGER.debug("XSenseDataUpdateCoordinator:get_all_devices 5")
+            LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:get_all_devices 5")
             raise UpdateFailed(f"XSense API Issue: {ex}") from ex
         else:
-            LOGGER.debug("XSenseDataUpdateCoordinator:get_all_devices 6")
+            LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:get_all_devices 6")
             return devices
 
     def _get_station_by_id(self, identifier: str):
@@ -183,16 +183,16 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Handle incoming data from MQTT."""
         data = json.loads(data_str.decode("utf8"))
         station_data = data.get("state", {}).get("reported", {})
-        LOGGER.debug("XSenseDataUpdateCoordinator:async_event_received 1 ")
+        LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:async_event_received 1 ")
         if station := self._get_station_by_id(station_data.get("stationSN")):
             children = station_data.pop("devs", {})
 
             self.xsense.parse_get_state(station, station_data)
             for k, v in children.items():
-                LOGGER.debug("XSenseDataUpdateCoordinator:async_event_received FOR %s", v)
+                LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:async_event_received FOR %s", v)
                 if dev := station.get_device_by_sn(k):
                     dev.set_data(v)
-        LOGGER.debug("XSenseDataUpdateCoordinator:async_event_received 0 %s", data_str.decode("utf8"))
+        LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:async_event_received 0 %s", data_str.decode("utf8"))
         self.async_update_listeners()
 
     async def assure_subscriptions(self, h: House) -> None:
@@ -241,11 +241,11 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             updatable_devices = [
                 dev.sn for dev in s.devices.values() if dev.type in ["STH51", "STH0A"]
             ]
-            # LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 1: \n%r", s)
-            LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 2")
+            # LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:request_device_updates 1: \n%r", s)
+            LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:request_device_updates 2")
             if not updatable_devices:
                 continue
-            LOGGER.debug("XSenseDataUpdateCoordinator:request_device_updates 3")
+            LOGGER.debug("VISCHIO - XSenseDataUpdateCoordinator:request_device_updates 3")
             msg = {
                 "state": {
                     "desired": {
