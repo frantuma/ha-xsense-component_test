@@ -181,10 +181,9 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     def async_event_received(self, topic: str, data_str: bytes) -> None:
         """Handle incoming data from MQTT."""
-        LOGGER.debug("XSenseDataUpdateCoordinator:async_event_received 0 %s", data_str)
         data = json.loads(data_str.decode("utf8"))
         station_data = data.get("state", {}).get("reported", {})
-        LOGGER.debug("XSenseDataUpdateCoordinator:async_event_received 1")
+        LOGGER.debug("XSenseDataUpdateCoordinator:async_event_received 1 ")
         if station := self._get_station_by_id(station_data.get("stationSN")):
             children = station_data.pop("devs", {})
 
@@ -193,7 +192,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 LOGGER.debug("XSenseDataUpdateCoordinator:async_event_received FOR %s", v)
                 if dev := station.get_device_by_sn(k):
                     dev.set_data(v)
-
+        LOGGER.debug("XSenseDataUpdateCoordinator:async_event_received 0 %s", data_str.decode("utf8"))
         self.async_update_listeners()
 
     async def assure_subscriptions(self, h: House) -> None:
