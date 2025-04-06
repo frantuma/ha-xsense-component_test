@@ -176,3 +176,18 @@ class XSenseMQTTConnectedEntity(XSenseBinarySensorEntity):
         LOGGER.debug("XSenseMQTTConnectedEntity is_on 1 %s", device)
         LOGGER.debug("XSenseMQTTConnectedEntity is_on 2 %s", mqtt_server)
         return mqtt_server.connected
+    
+    def generate_entity_id(
+        entity_id_format: str,
+        name: str | None,
+        current_ids: list[str] | None = None,
+        hass: HomeAssistant | None = None,
+    ) -> str:
+        preferred_string = "connected_entity_id"
+        test_string = preferred_string
+        tries = 1
+        while not hass.states.async_available(test_string):
+            tries += 1
+            test_string = f"{preferred_string}_{tries}"
+
+        return test_string
